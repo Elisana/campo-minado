@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 class CampoTest {
 	
 	private Campo campo = new Campo(3,3);
+	
 
 	@Test
 	void test() {
