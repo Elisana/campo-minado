@@ -3,6 +3,8 @@ package com.gmail.elisana.favarin.cm.modelo;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gmail.elisana.favarin.cm.excecao.ExplosaoException;
+
 public class Campo {
 	
 	private final int linha;
@@ -40,8 +42,56 @@ public class Campo {
 			return true;
 		}else {
 			return false;
+		}		
+	}
+	
+	void alternarMarcacao() {		
+		//só marca os campos que ainda não foram abertos
+		if(!aberto) {
+			marcado = !marcado;
 		}
-		
+	}
+	
+	boolean abrir() {
+		//abre o campo se ele estiver fechado e não estiver aberto
+		if(!aberto && !marcado) {
+			aberto = true;
+			
+			//se o campo está minado, acaba o jogo
+			if(minado) {
+				//Vai interromper o processo e voltar para quem chamou
+				throw new ExplosaoException();
+			}
+			
+			//se os vizinhos são seguros, faz uma chamada recursiva para abrir os vizinhos dos vizinhos
+			if(vizinhancaSegura()) {
+				//passa uma consumer como parametro
+			   vizinhos.forEach(v -> v.abrir());	
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	boolean vizinhancaSegura() {
+		return vizinhos.stream().noneMatch(v -> v.minado);
+	}
+	
+	void minar() {		
+		minado = true;
+	}
+	
+	public boolean isMarcado() {
+		return marcado;
+	}
+	
+	public boolean isAberto() {
+		return aberto;
+	}
+	
+	public boolean isFechado() {
+		return !isAberto();
 	}
 
 }
